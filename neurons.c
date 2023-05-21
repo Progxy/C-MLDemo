@@ -1,18 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "./neurons.h"
 #include "./utils.h"
-
-typedef struct Neuron {
-    float bias;
-    float* inputs;
-    size_t input_count;
-} Neuron;
-
-typedef struct NeuralNetwork {
-    Neuron** neurons;
-    size_t layers;
-    size_t* neurons_count;
-} NeuralNetwork; 
 
 void init_nn(NeuralNetwork* neuralNetwork) {
     for (size_t i = 0; i < neuralNetwork -> layers; ++i) {

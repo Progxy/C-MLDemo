@@ -1,3 +1,5 @@
+// This file contains collects all the utility functions used in other files
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

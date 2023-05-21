@@ -1,3 +1,5 @@
+// This file contains all the functions to generate and initialize the neural network, including all of its neurons
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "./neurons.h"

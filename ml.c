@@ -4,7 +4,7 @@
 
 #define TRAINING_INPUT_LENGTH 10
 #define LEARNING_RATE 1e-3
-#define EPSILON 1e-14
+#define EPSILON 1e-3
 
 typedef struct Neuron{
     float w1;

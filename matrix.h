@@ -20,4 +20,4 @@ void dot_matrix(Matrix dest, Matrix a, Matrix b);
 void print_matrix(Matrix matrix, const char* name);
 Matrix gen_id_matrix(size_t size);
 
-#endif
+#endif //_MATRIX_H_

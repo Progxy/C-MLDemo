@@ -5,54 +5,7 @@
 #include "./neurons.h"
 #include "./utils.h"
 
-void init_nn(NeuralNetwork* neuralNetwork) {
-    for (size_t i = 0; i < neuralNetwork -> layers; ++i) {
-        for (size_t j = 0; j < neuralNetwork -> neurons_count[i]; ++j) {
-            init_neuron(&((neuralNetwork -> neurons)[i][j]));
-        }
-    }
-
-    return;
-}
-
-void init_neuron(Neuron* neuron) {
-    // Init inputs
-    for (size_t i = 0; i < neuron -> input_count; ++i) {
-        (neuron -> inputs)[i] = rand_float();
-    }
-
-    // Init bias 
-    neuron -> bias = rand_float();
-
-    return;
-}
-
-NeuralNetwork generate_nn(size_t layers, size_t* neurons, size_t** inputs_count) {
-    // Init the neural network
-    NeuralNetwork neuralNetwork = {
-        .neurons = calloc(layers, sizeof(Neuron*)),
-        .layers = layers,
-        .neurons_count = neurons
-    };
-
-    for (size_t i = 0; i < layers; ++i) {
-        // Init memory for the layer
-        neuralNetwork.neurons[i] = calloc(neurons[i], sizeof(Neuron));
-        for (size_t j = 0; j < neurons[i]; ++j) {
-            // Add a neuron with the given inputs
-            neuralNetwork.neurons[i][j] = generate_neuron(inputs_count[i][j]);
-        }
-    }
-
+NeuralNetwork nn_alloc(Matrix input, size_t* arch) {
+    NeuralNetwork neuralNetwork;
     return neuralNetwork;
-}
-
-Neuron generate_neuron(size_t input_count) {
-    Neuron neuron = {
-        0.f,
-        NULL,
-        input_count
-    };
-
-    return neuron;
 }

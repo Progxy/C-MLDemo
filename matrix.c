@@ -1,3 +1,5 @@
+// This file contains all the functions necessary to work with matrices
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>

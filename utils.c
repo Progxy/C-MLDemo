@@ -9,5 +9,5 @@ void init_seed() {
 }
 
 float rand_float() {
-    return rand() / RAND_MAX; 
+    return (float) rand() / (float) RAND_MAX; 
 }

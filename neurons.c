@@ -29,10 +29,11 @@ void init_neuron(Neuron* neuron) {
 
 NeuralNetwork generate_nn(size_t layers, size_t* neurons, size_t** inputs_count) {
     // Init the neural network
-    NeuralNetwork neuralNetwork = {};
-    neuralNetwork.neurons = calloc(layers, sizeof(Neuron*));
-    neuralNetwork.layers = layers;
-    neuralNetwork.neurons_count = neurons;
+    NeuralNetwork neuralNetwork = {
+        .neurons = calloc(layers, sizeof(Neuron*)),
+        .layers = layers,
+        .neurons_count = neurons
+    };
 
     for (size_t i = 0; i < layers; ++i) {
         // Init memory for the layer

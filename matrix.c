@@ -59,6 +59,7 @@ void dot_matrix(Matrix dest, Matrix a, Matrix b) {
 
     for (size_t i = 0; i < a.rows; ++i) {
         for (size_t j = 0; j < b.cols; ++j) {
+            MATRIX_AT(dest, i, j) = 0;
             for (size_t q = 0; q < a.cols; ++q) {
                 MATRIX_AT(dest, i, j) += MATRIX_AT(a, i, q) * MATRIX_AT(b, q, j);
             }
@@ -81,4 +82,15 @@ void print_matrix(Matrix matrix, const char* name) {
     printf("]\n");
 
     return;
+}
+
+Matrix gen_id_matrix(size_t size) {
+    Matrix matrix = matrix_alloc(size, size);
+    fill_matrix(matrix, 0);
+    
+    for (size_t i = 0; i < size; ++i) {
+        MATRIX_AT(matrix, i, i) = 1;
+    }
+
+    return matrix;
 }

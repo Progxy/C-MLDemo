@@ -146,8 +146,9 @@ void learn_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, float rate) {
 }
 
 float cost_nn(NeuralNetwork neuralNetwork, Matrix input, Matrix output) {
-    NN_ASSERT(input.rows == output.rows);
-    NN_ASSERT(output.cols == OUTPUT_NN(neuralNetwork).cols);
+    assert(INPUT_NN(neuralNetwork).cols == input.cols);
+    assert(OUTPUT_NN(neuralNetwork).cols == output.cols);
+    assert(input.rows == output.rows);
 
     float cost = 0;
     for (size_t i = 0; i < input.rows; ++i) {
@@ -155,7 +156,7 @@ float cost_nn(NeuralNetwork neuralNetwork, Matrix input, Matrix output) {
         Matrix output_row = row_matrix(output, i);
 
         // Feed the network
-        mat_copy(NN_INPUT(neuralNetwork), input_row);
+        copy_matrix(INPUT_NN(neuralNetwork), input_row);
         activate_matrix(INPUT_NN(neuralNetwork));
         forward_nn(neuralNetwork);
 

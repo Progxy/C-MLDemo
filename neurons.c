@@ -94,7 +94,7 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
                 float activation = MATRIX_AT(neuralNetwork.layers[l].activation, 0, c);
                 float diffActivation = MATRIX_AT(gradient.layers[l].activation, 0, c);
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential
-                MATRIX_AT(gradient.layers[l].bias, 0, c) = 2 * diffActivation * activation * (1 - activation);
+                MATRIX_AT(gradient.layers[l].bias, 0, c) += 2 * diffActivation * activation * (1 - activation);
                 // Calculate the differential for the weights and the activation
                 for (size_t r = 0; r < neuralNetwork.layers[l - 1].activation.cols; ++r) {
                     float previousActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, r);

@@ -79,8 +79,8 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
         forward_nn(neuralNetwork);
 
         // Clear the activation matrix for each layer
-        for (size_t j = 0; j < neuralNetwork.arch_count; ++i) {
-            fill_matrix(neuralNetwork.layers[j].activation, 0);
+        for (size_t j = 0; j < gradient.arch_count; ++j) {
+            fill_matrix(gradient.layers[j].activation, 0);
         }
 
         // Store the difference between the current output and the expected output into the output of the gradient to start the backpropagation
@@ -89,8 +89,8 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
         }
 
         // Start calculating the gradient of the l-th layer based on the gradient of the next layer
-        for (size_t l = neuralNetwork.arch_count - 1; l > 0; --l) {
-            for (size_t c = 0; neuralNetwork.layers[l].activation.cols; ++c) {
+        for (int l = neuralNetwork.arch_count - 1; l > 0; --l) {
+            for (size_t c = 0; c < neuralNetwork.layers[l].activation.cols; ++c) {
                 float activation = MATRIX_AT(neuralNetwork.layers[l].activation, 0, c);
                 float diffActivation = MATRIX_AT(gradient.layers[l].activation, 0, c);
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential

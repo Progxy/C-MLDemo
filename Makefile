@@ -5,7 +5,7 @@ OBJS = ml.c utils.c neurons.c matrix.c layers.c
 CC = gcc
 
 # COMPILER_FLAGS specifies the additional compilation options we're using
-COMPILER_FLAGS = -std=c11 -Wall -Wextra
+COMPILER_FLAGS = -std=c11 -Wall -Wextra -O3
 
 #LIBS specifies the additional libraries
 LIBS = -lm

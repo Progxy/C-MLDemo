@@ -16,6 +16,7 @@ Matrix matrix_alloc(size_t rows, size_t cols) {
         .data = malloc(sizeof(float) * rows * cols)
     };
 
+    assert(matrix.data != NULL);
 
     return matrix;
 }

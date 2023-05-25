@@ -4,14 +4,14 @@
 #include "./matrix.h"
 #include "./layers.h"
 
+#define PRINT_NN(nn) print_nn(nn, #nn)
+
 typedef struct {
-    Matrix input;
     Layer* layers;
-    size_t* arch;
-    Matrix first_activation;
-    Matrix output;
+    size_t arch_count;
 } NeuralNetwork;
 
-NeuralNetwork nn_alloc(Matrix input, Matrix output, size_t* arch, size_t arch_len);
+NeuralNetwork nn_alloc(size_t* arch, size_t arch_count);
+void print_nn(NeuralNetwork neuralNetwork, const char* name);
 
 #endif //_NEURONS_H_

@@ -1,5 +1,5 @@
 # OBJS specifies which files to compile as part of the project
-OBJS = ml.c utils.c neurons.c matrix.c
+OBJS = ml.c utils.c neurons.c matrix.c layers.c
 
 # CC specifies which compiler we're using
 CC = gcc

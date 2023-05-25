@@ -24,3 +24,7 @@ float absf(float x) {
 float reluf(float x) {
     return (x + absf(x)) / 2;
 }
+
+float preluf(float x, float alpha) {
+    return x > 0 ? x : alpha * x;
+}

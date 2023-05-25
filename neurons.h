@@ -11,6 +11,7 @@
 typedef struct {
     Layer* layers;
     size_t arch_count;
+    float alpha;
 } NeuralNetwork;
 
 NeuralNetwork alloc_nn(size_t* arch, size_t arch_count);

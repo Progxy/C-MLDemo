@@ -7,5 +7,6 @@ float rand_float();
 void init_seed();
 float sigmoidf(float x);
 float reluf(float x);
+float preluf(float x, float alpha);
 
 #endif //_UTILS_H_

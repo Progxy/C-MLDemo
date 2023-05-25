@@ -107,3 +107,24 @@ void activate_matrix(Matrix matrix) {
 
     return;
 }
+
+void copy_matrix(Matrix dest, Matrix src) {
+    assert(dest.cols == src.cols);
+    assert(dest.rows == src.rows);
+    
+    for (size_t i = 0; i < src.rows; ++i) {
+        for (size_t j = 0; j < src.cols; ++j) {
+            MATRIX_AT(dest, i, j) = MATRIX_AT(src, i, j);
+        }
+    }
+
+    return;
+}
+
+Matrix row_matrix(Matrix matrix, size_t row) {
+    return (Matrix){
+        .rows = 1,
+        .cols = matrix.cols,
+        .data = &MATRIX_AT(matrix, row, 0)
+    };
+}

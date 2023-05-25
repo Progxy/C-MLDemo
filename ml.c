@@ -10,7 +10,5 @@ int main() {
     PRINT_NN(neuralNetwork);
     Matrix input = matrix_alloc(1, 4);
     rand_matrix(input, 0, 1);
-    forward_nn(neuralNetwork, input);
-    PRINT_NN(neuralNetwork);
     return 0;
 }

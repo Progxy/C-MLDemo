@@ -20,5 +20,7 @@ void dot_matrix(Matrix dest, Matrix a, Matrix b);
 void print_matrix(Matrix matrix, const char* name);
 Matrix gen_id_matrix(size_t size);
 void activate_matrix(Matrix matrix);
+void copy_matrix(Matrix dest, Matrix src);
+Matrix row_matrix(Matrix matrix, size_t row);
 
 #endif //_MATRIX_H_

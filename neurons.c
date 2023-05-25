@@ -28,6 +28,7 @@ NeuralNetwork alloc_nn(size_t* arch, size_t arch_count) {
 
 void print_nn(NeuralNetwork neuralNetwork, const char* name) {
     printf("%s:[\n", name);
+    printf("alpha: %f,\n", neuralNetwork.alpha);
     print_matrix(neuralNetwork.layers[0].activation, "a0");
     for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
         char name[256];

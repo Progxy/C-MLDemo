@@ -26,5 +26,5 @@ float reluf(float x) {
 }
 
 float preluf(float x, float alpha) {
-    return x > 0 ? x : alpha * x;
+    return x >= 0 ? x : (alpha * x);
 }

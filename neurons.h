@@ -11,7 +11,8 @@ typedef struct {
     size_t arch_count;
 } NeuralNetwork;
 
-NeuralNetwork nn_alloc(size_t* arch, size_t arch_count);
+NeuralNetwork alloc_nn(size_t* arch, size_t arch_count);
 void print_nn(NeuralNetwork neuralNetwork, const char* name);
+void forward_nn(NeuralNetwork neuralNetwork, Matrix input);
 
 #endif //_NEURONS_H_

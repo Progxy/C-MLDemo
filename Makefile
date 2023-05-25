@@ -7,8 +7,11 @@ CC = gcc
 # COMPILER_FLAGS specifies the additional compilation options we're using
 COMPILER_FLAGS = -std=c11 -Wall -Wextra
 
+#LIBS specifies the additional libraries
+LIBS = -lm
+
 # OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = ml
 
 all : $(OBJS)
-	$(CC) $(OBJS) $(COMPILER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LIBS) -o $(OBJ_NAME)

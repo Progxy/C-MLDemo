@@ -2,23 +2,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "./neurons.h"
 #include "./layers.h"
 #include "./utils.h"
 
 
-NeuralNetwork nn_alloc(size_t* arch, size_t arch_count) {
+NeuralNetwork alloc_nn(size_t* arch, size_t arch_count) {
     NeuralNetwork neuralNetwork = {
         .layers = malloc(sizeof(Layer) * (arch_count)),
         .arch_count = arch_count
     };
     
     // Input layer
-    neuralNetwork.layers[0].activation = matrix_alloc(arch[0], 1);
+    neuralNetwork.layers[0].activation = matrix_alloc(1, arch[0]);
 
     // Generate layers
     for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
-        neuralNetwork.layers[i] = layer_alloc(arch[i], arch[i - 1]);
+        neuralNetwork.layers[i] = layer_alloc(arch[i - 1], arch[i]);
     }
 
     return neuralNetwork;
@@ -36,7 +37,23 @@ void print_nn(NeuralNetwork neuralNetwork, const char* name) {
         snprintf(name, 256, "a%zu", i);
         print_matrix(neuralNetwork.layers[i].activation, name);
     }
-    printf("\n]");
+    printf("\n]\n");
+
+    return;
+}
+
+void forward_nn(NeuralNetwork neuralNetwork, Matrix input) {
+    assert(neuralNetwork.layers[0].activation.cols == input.cols);
+
+    // Pass the input to the activation of the input layer
+    neuralNetwork.layers[0].activation.data = input.data;
+    activate_matrix(neuralNetwork.layers[0].activation);
+
+    for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
+        dot_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i - 1].activation, neuralNetwork.layers[i].weight);
+        sum_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i].bias);
+        activate_matrix(neuralNetwork.layers[i].activation);
+    }
 
     return;
 }

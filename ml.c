@@ -5,8 +5,12 @@
 
 int main() {
     init_seed();
-    size_t arch[] = {4, 3, 2, 1};
-    NeuralNetwork neuralNetwork = nn_alloc(arch, ARRAY_LEN(arch));
+    size_t arch[] = {4, 3, 2};
+    NeuralNetwork neuralNetwork = alloc_nn(arch, ARRAY_LEN(arch));
+    PRINT_NN(neuralNetwork);
+    Matrix input = matrix_alloc(1, 4);
+    rand_matrix(input, 0, 1);
+    forward_nn(neuralNetwork, input);
     PRINT_NN(neuralNetwork);
     return 0;
 }

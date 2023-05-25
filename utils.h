@@ -5,5 +5,6 @@
 
 float rand_float();
 void init_seed();
+float sigmoidf(float x);
 
 #endif //_UTILS_H_

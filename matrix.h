@@ -19,5 +19,6 @@ void sum_matrix(Matrix a, Matrix b);
 void dot_matrix(Matrix dest, Matrix a, Matrix b);
 void print_matrix(Matrix matrix, const char* name);
 Matrix gen_id_matrix(size_t size);
+void activate_matrix(Matrix matrix);
 
 #endif //_MATRIX_H_

@@ -11,8 +11,7 @@
 NeuralNetwork alloc_nn(size_t* arch, size_t arch_count) {
     NeuralNetwork neuralNetwork = {
         .layers = malloc(sizeof(Layer) * (arch_count)),
-        .arch_count = arch_count,
-        .alpha = rand_float()
+        .arch_count = arch_count
     };
     
     // Input layer
@@ -28,7 +27,6 @@ NeuralNetwork alloc_nn(size_t* arch, size_t arch_count) {
 
 void print_nn(NeuralNetwork neuralNetwork, const char* name) {
     printf("%s:[\n", name);
-    printf("alpha: %f,\n", neuralNetwork.alpha);
     print_matrix(neuralNetwork.layers[0].activation, "a0");
     for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
         char name[256];
@@ -45,11 +43,11 @@ void print_nn(NeuralNetwork neuralNetwork, const char* name) {
 }
 
 void forward_nn(NeuralNetwork neuralNetwork) {
-    activate_matrix(INPUT_NN(neuralNetwork), neuralNetwork.alpha);
+    activate_matrix(INPUT_NN(neuralNetwork));
     for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
         dot_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i - 1].activation, neuralNetwork.layers[i].weight);
         sum_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i].bias);
-        activate_matrix(neuralNetwork.layers[i].activation, neuralNetwork.alpha);
+        activate_matrix(neuralNetwork.layers[i].activation);
     }
 
     return;
@@ -97,26 +95,17 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
                 float diffActivation = MATRIX_AT(gradient.layers[l].activation, 0, c);
                 
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential
-                MATRIX_AT(gradient.layers[l].bias, 0, c) += activation >= 0 ? 2 * diffActivation : 2 * diffActivation * neuralNetwork.alpha;      
+                MATRIX_AT(gradient.layers[l].bias, 0, c) += 2 * diffActivation * activation * (1 - activation);      
                 
                 // Calculate the differential for the weights and the activation
                 for (size_t r = 0; r < neuralNetwork.layers[l - 1].activation.cols; ++r) {
                     float previousActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, r);
                     float weight = MATRIX_AT(neuralNetwork.layers[l].weight, r, c);
-                    MATRIX_AT(gradient.layers[l].weight, r, c) += activation >= 0 ? 2 * diffActivation * previousActivation : 2 * diffActivation * neuralNetwork.alpha * previousActivation;
-                    MATRIX_AT(gradient.layers[l - 1].activation, 0, r) += activation >= 0 ? 2 * diffActivation * weight : 2 * diffActivation * neuralNetwork.alpha * weight;
+                    MATRIX_AT(gradient.layers[l].weight, r, c) += 2 * diffActivation * activation * (1 - activation) * previousActivation;
+                    MATRIX_AT(gradient.layers[l - 1].activation, 0, r) += 2 * diffActivation * activation * (1 - activation) * weight;
                 }
-
-                // Calculate the differential for the alpha param
-                neuralNetwork.alpha += activation >= 0 ? 0 : 2 * diffActivation * activation;
             }
-
-            // Rescale the value of alpha
-            neuralNetwork.alpha /= neuralNetwork.layers[l].activation.cols;
         }
-
-        // Rescale the value of alpha
-        neuralNetwork.alpha /= neuralNetwork.arch_count - 1;
     }
 
     // Get the average for each gradient
@@ -138,9 +127,6 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
             MATRIX_AT(gradient.layers[l].activation, 0, c) /= n;
         }
     }
-
-    // Rescale the value of the alpha
-    neuralNetwork.alpha /= n;
 
     return;
 }

@@ -36,7 +36,7 @@ int main() {
     NeuralNetwork neuralNetwork = alloc_nn(arch, ARRAY_LEN(arch));
     NeuralNetwork gradient = alloc_nn(arch, ARRAY_LEN(arch));
 
-    for (size_t i = 0; i < 1000; ++i) {
+    for (size_t i = 0; i < 50000; ++i) {
         backprop_nn(neuralNetwork, gradient, input, output);
         learn_nn(neuralNetwork, gradient, 1);
         printf("%zu: cost = %f\n", i, cost_nn(neuralNetwork, input, output));

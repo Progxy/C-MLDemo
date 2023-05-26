@@ -101,7 +101,7 @@ Matrix gen_id_matrix(size_t size) {
 void activate_matrix(Matrix matrix, float alpha) {
     for (size_t i = 0; i < matrix.rows; ++i) {
         for (size_t j = 0; j < matrix.cols; ++j) {
-            MATRIX_AT(matrix, i, j) = preluf(MATRIX_AT(matrix, i, j), alpha);
+            MATRIX_AT(matrix, i, j) = sigmoidf(MATRIX_AT(matrix, i, j));
         }
     }
 

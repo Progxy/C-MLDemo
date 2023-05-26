@@ -97,20 +97,26 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
                 float diffActivation = MATRIX_AT(gradient.layers[l].activation, 0, c);
                 
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential
-                MATRIX_AT(gradient.layers[l].bias, 0, c) += 2 * diffActivation * activation * (1 - activation);
-                
-                // Calculate the differential for the alpha param
-                neuralNetwork.alpha += 2 * diffActivation * activation * (1 - activation);
+                MATRIX_AT(gradient.layers[l].bias, 0, c) += activation >= 0 ? 2 * diffActivation : 2 * diffActivation * neuralNetwork.alpha;      
                 
                 // Calculate the differential for the weights and the activation
                 for (size_t r = 0; r < neuralNetwork.layers[l - 1].activation.cols; ++r) {
                     float previousActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, r);
                     float weight = MATRIX_AT(neuralNetwork.layers[l].weight, r, c);
-                    MATRIX_AT(gradient.layers[l].weight, r, c) += 2 * diffActivation * activation * (1 - activation) * previousActivation;
-                    MATRIX_AT(gradient.layers[l - 1].activation, 0, r) += 2 * diffActivation * activation * (1 - activation) * weight;
+                    MATRIX_AT(gradient.layers[l].weight, r, c) += activation >= 0 ? 2 * diffActivation * previousActivation : 2 * diffActivation * neuralNetwork.alpha * previousActivation;
+                    MATRIX_AT(gradient.layers[l - 1].activation, 0, r) += activation >= 0 ? 2 * diffActivation * weight : 2 * diffActivation * neuralNetwork.alpha * weight;
                 }
+
+                // Calculate the differential for the alpha param
+                neuralNetwork.alpha += activation >= 0 ? 0 : 2 * diffActivation * activation;
             }
+
+            // Rescale the value of alpha
+            neuralNetwork.alpha /= neuralNetwork.layers[l].activation.cols;
         }
+
+        // Rescale the value of alpha
+        neuralNetwork.alpha /= neuralNetwork.arch_count - 1;
     }
 
     // Get the average for each gradient

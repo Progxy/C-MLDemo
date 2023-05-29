@@ -21,6 +21,11 @@ Matrix matrix_alloc(size_t rows, size_t cols) {
     return matrix;
 }
 
+void matrix_dealloc(Matrix matrix) {
+    free(matrix.data);
+    return;
+}
+
 void rand_matrix(Matrix matrix, float min, float max) {
     assert(min <= max);
 
@@ -98,10 +103,12 @@ Matrix gen_id_matrix(size_t size) {
     return matrix;
 }
 
-void activate_matrix(Matrix matrix) {
+void activate_matrix(Matrix matrix, Matrix alpha) {
+    assert(matrix.rows == alpha.rows);
+    
     for (size_t i = 0; i < matrix.rows; ++i) {
         for (size_t j = 0; j < matrix.cols; ++j) {
-            MATRIX_AT(matrix, i, j) = sigmoidf(MATRIX_AT(matrix, i, j));
+            MATRIX_AT(matrix, i, j) = preluf(MATRIX_AT(matrix, i, j), MATRIX_AT(alpha, i, j));
         }
     }
 

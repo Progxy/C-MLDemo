@@ -12,6 +12,8 @@ Layer layer_alloc(size_t rows, size_t cols) {
     rand_matrix(layer.bias, -1, 1);
     layer.weight = matrix_alloc(rows, cols);
     rand_matrix(layer.weight, -1, 1);
+    layer.alpha = matrix_alloc(1, cols);
+    rand_matrix(layer.alpha, -1, 1);
     
     return layer;
 }

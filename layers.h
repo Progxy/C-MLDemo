@@ -7,6 +7,7 @@ typedef struct {
     Matrix weight;
     Matrix bias;
     Matrix activation;
+    Matrix alpha;
 } Layer;
 
 Layer layer_alloc(size_t rows, size_t cols);

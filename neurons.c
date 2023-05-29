@@ -43,13 +43,18 @@ void print_nn(NeuralNetwork neuralNetwork, const char* name) {
 }
 
 void forward_nn(NeuralNetwork neuralNetwork) {
-    activate_matrix(INPUT_NN(neuralNetwork));
     for (size_t i = 1; i < neuralNetwork.arch_count; ++i) {
         dot_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i - 1].activation, neuralNetwork.layers[i].weight);
         sum_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i].bias);
-        activate_matrix(neuralNetwork.layers[i].activation);
+        activate_matrix(neuralNetwork.layers[i].activation, neuralNetwork.layers[i].alpha);
     }
 
+    return;
+}
+
+void calc_weighted_sum(NeuralNetwork neuralNetwork, size_t layer, Matrix matrix) {
+    dot_matrix(matrix, neuralNetwork.layers[layer - 1].activation, neuralNetwork.layers[layer].weight);
+    sum_matrix(matrix, neuralNetwork.layers[layer].bias);
     return;
 }
 
@@ -64,7 +69,7 @@ void zero_nn(NeuralNetwork neuralNetwork) {
     return;
 }
 
-void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix input, Matrix output) {
+void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix input, Matrix output, float learning_rate) {
     assert(INPUT_NN(neuralNetwork).cols == input.cols);
     assert(OUTPUT_NN(neuralNetwork).cols == output.cols);
     assert(input.rows == output.rows);
@@ -83,49 +88,43 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
             fill_matrix(gradient.layers[j].activation, 0);
         }
 
-        // Store the difference between the current output and the expected output into the output of the gradient to start the backpropagation
+        // Compute the gradient of the loss with respect to the activation of the output layer
         for (size_t j = 0; j < output.cols; ++j) {
             MATRIX_AT(OUTPUT_NN(gradient), 0, j) = MATRIX_AT(OUTPUT_NN(neuralNetwork), 0, j) - MATRIX_AT(output, i, j);
         }
 
         // Start calculating the gradient of the l-th layer based on the gradient of the next layer
         for (int l = neuralNetwork.arch_count - 1; l > 0; --l) {
+            Matrix weighted_sum = matrix_alloc(1, neuralNetwork.layers[l].activation.cols);
             for (size_t c = 0; c < neuralNetwork.layers[l].activation.cols; ++c) {
-                float activation = MATRIX_AT(neuralNetwork.layers[l].activation, 0, c);
+                float prevActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, c);
                 float diffActivation = MATRIX_AT(gradient.layers[l].activation, 0, c);
-                
+                float currentAlpha = MATRIX_AT(neuralNetwork.layers[l].alpha, 0, c);
+                float z = MATRIX_AT(weighted_sum, 0, c);
+
+                // Compute the gradient of the loss with respect to the weighted sum (z^l):
+                // dz^l = dL/da^l * dprelu(z^l, alpha^l)/dz^l, where the second termi is equal to if z^l >= 0 -> 1 else -> alpha
+                float diffZ = diffActivation * (z >= 0 ? 1 : currentAlpha);                
+
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential
-                MATRIX_AT(gradient.layers[l].bias, 0, c) += 2 * diffActivation * activation * (1 - activation);      
+                MATRIX_AT(gradient.layers[l].bias, 0, c) = diffZ;      
+                
+                // Compute the gradient of the loss with respect to alpha:
+                // dL/dalpha^l = dz^l * (a^(l-1) - alpha^l * sign(z^l)) # Here, sign(z^l) is the sign function of z^l.
+                MATRIX_AT(gradient.layers[l].alpha, 0, c) = diffZ * (prevActivation - currentAlpha * signf(z));
                 
                 // Calculate the differential for the weights and the activation
                 for (size_t r = 0; r < neuralNetwork.layers[l - 1].activation.cols; ++r) {
                     float previousActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, r);
-                    float weight = MATRIX_AT(neuralNetwork.layers[l].weight, r, c);
-                    MATRIX_AT(gradient.layers[l].weight, r, c) += 2 * diffActivation * activation * (1 - activation) * previousActivation;
-                    MATRIX_AT(gradient.layers[l - 1].activation, 0, r) += 2 * diffActivation * activation * (1 - activation) * weight;
+                    //float weight = MATRIX_AT(neuralNetwork.layers[l].weight, r, c);
+                    MATRIX_AT(gradient.layers[l].weight, r, c) = diffZ * previousActivation;
+                    //MATRIX_AT(gradient.layers[l - 1].activation, 0, r) = diffZ * weight;
                 }
             }
-        }
-    }
-
-    // Get the average for each gradient
-    for (size_t l = 1; l < gradient.arch_count; ++l) {
-        // 1/n * gradient for each weight
-        for (size_t r = 0; r < gradient.layers[l].weight.rows; ++r) {
-            for (size_t c = 0; c < gradient.layers[l].weight.cols; ++c) {
-                MATRIX_AT(gradient.layers[l].weight, r, c) /= n;
-            }
+            matrix_dealloc(weighted_sum);
         }
 
-        // 1/n * gradient for each bias
-        for (size_t c = 0; c < gradient.layers[l].bias.cols; ++c) {
-            MATRIX_AT(gradient.layers[l].bias, 0, c) /= n;
-        }            
-        
-        // 1/n * gradient for each activation
-        for (size_t c = 0; c < gradient.layers[l - 1].activation.cols; ++c) {
-            MATRIX_AT(gradient.layers[l].activation, 0, c) /= n;
-        }
+        learn_nn(neuralNetwork, gradient, learning_rate);
     }
 
     return;
@@ -145,6 +144,13 @@ void learn_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, float rate) {
     for (size_t l = 1; l < neuralNetwork.arch_count; ++l) {
         for (size_t c = 0; c < neuralNetwork.layers[l].bias.cols; ++c) {
             MATRIX_AT(neuralNetwork.layers[l].bias, 0, c) -= rate * MATRIX_AT(gradient.layers[l].bias, 0, c);
+        }
+    }    
+    
+    // Update the current value of the alpha by subtracting the gradient multiplied by the learning rate
+    for (size_t l = 1; l < neuralNetwork.arch_count; ++l) {
+        for (size_t c = 0; c < neuralNetwork.layers[l].bias.cols; ++c) {
+            MATRIX_AT(neuralNetwork.layers[l].bias, 0, c) -= rate * MATRIX_AT(gradient.layers[l].alpha, 0, c);
         }
     }
 
@@ -166,13 +172,15 @@ float cost_nn(NeuralNetwork neuralNetwork, Matrix input, Matrix output) {
         copy_matrix(INPUT_NN(neuralNetwork), input_row);
         forward_nn(neuralNetwork);
 
-        // Calculate the error and amplify it by multipling it by itself
+        // Calculate the loss
+        // (1/2) * (a^L - y)^2
         for (size_t j = 0; j < output.cols; ++j) {
-            float difference = MATRIX_AT(OUTPUT_NN(neuralNetwork), 0, j) - MATRIX_AT(output_row, 0, j);
-            cost += difference * difference;
+            float half = (float) 1 / (float) 2;
+            cost += half * powerf(2, MATRIX_AT(OUTPUT_NN(neuralNetwork), 0, j) - MATRIX_AT(output_row, 0, j));
         }
     }
-
+    
+    // Return the average cost
     return cost / input.rows;
 }
 

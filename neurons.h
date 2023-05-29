@@ -17,7 +17,7 @@ typedef struct {
 NeuralNetwork alloc_nn(size_t* arch, size_t arch_count);
 void print_nn(NeuralNetwork neuralNetwork, const char* name);
 void forward_nn(NeuralNetwork neuralNetwork);
-void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix input, Matrix output);
+void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix input, Matrix output, float learning_rate);
 void zero_nn(NeuralNetwork neuralNetwork);
 void learn_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, float rate);
 float cost_nn(NeuralNetwork neuralNetwork, Matrix input, Matrix output);

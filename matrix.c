@@ -129,9 +129,40 @@ void copy_matrix(Matrix dest, Matrix src) {
 }
 
 Matrix row_matrix(Matrix matrix, size_t row) {
-    return (Matrix){
+    return (Matrix) {
         .rows = 1,
         .cols = matrix.cols,
         .data = &MATRIX_AT(matrix, row, 0)
     };
+}
+
+Matrix sub_matrix(Matrix matrix, size_t rows, size_t cols, size_t row_start, size_t col_start) {
+    float* data = malloc(rows * cols * sizeof(float));
+
+    // Trim the matrix into the requested sub-matrix
+    for (size_t r = row_start; r < (rows + row_start); ++r) {
+        for (size_t c = col_start; c < (col_start + cols); ++c) {
+            size_t new_row = r - row_start;
+            size_t new_col = c - col_start;
+            data[new_row * cols + new_col] = MATRIX_AT(matrix, r, c);
+        }
+    }
+
+    return (Matrix) {
+        .rows = rows,
+        .cols = cols,
+        .data = data
+    };
+}
+
+void shuffle_matrix(Matrix matrix) {
+    size_t max = matrix.rows * matrix.cols - 2;
+    for (size_t i = 0; i < max; ++i) {
+        size_t j = rand_int(i, max);
+        float swap = matrix.data[i];
+        matrix.data[i] = matrix.data[j];
+        matrix.data[j] = swap;
+    }
+
+    return;
 }

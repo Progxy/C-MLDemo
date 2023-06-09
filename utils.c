@@ -13,6 +13,10 @@ float rand_float() {
     return (float) rand() / (float) RAND_MAX; 
 }
 
+int rand_int(int min, int max) {
+    return (rand() % (max - min)) + min; 
+}
+
 float sigmoidf(float x) {
     return 1.f / (1.f + expf(-x));
 }

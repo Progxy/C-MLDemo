@@ -103,7 +103,7 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
                 float z = MATRIX_AT(weighted_sum, 0, c);
 
                 // Compute the gradient of the loss with respect to the weighted sum (z^l):
-                // dz^l = dL/da^l * dprelu(z^l, alpha^l)/dz^l, where the second termi is equal to if z^l >= 0 -> 1 else -> alpha
+                // dz^l = dL/da^l * dprelu(z^l, alpha^l)/dz^l, where the second term is equal to (if (z^l >= 0) -> 1 else -> alpha)
                 float diffZ = diffActivation * (z >= 0 ? 1 : currentAlpha);                
 
                 // Calculate the differential for the bias based on the activation matrix of the next layer and it's differential

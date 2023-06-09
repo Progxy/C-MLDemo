@@ -23,5 +23,6 @@ void activate_matrix(Matrix matrix, Matrix alpha);
 void copy_matrix(Matrix dest, Matrix src);
 Matrix row_matrix(Matrix matrix, size_t row);
 void matrix_dealloc(Matrix matrix);
+void shuffle_matrix(Matrix matrix);
 
 #endif //_MATRIX_H_

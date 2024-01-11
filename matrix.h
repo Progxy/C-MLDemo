@@ -23,6 +23,8 @@ void activate_matrix(Matrix matrix, Matrix alpha);
 void copy_matrix(Matrix dest, Matrix src);
 Matrix row_matrix(Matrix matrix, size_t row);
 void matrix_dealloc(Matrix matrix);
+void reshape_matrix(Matrix* mat, size_t rows, size_t cols, float* new_data);
 void shuffle_matrix(Matrix matrix);
+Matrix sub_matrix(Matrix matrix, size_t rows, size_t cols, size_t row_start, size_t col_start);
 
 #endif //_MATRIX_H_

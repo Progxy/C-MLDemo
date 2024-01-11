@@ -115,6 +115,18 @@ void activate_matrix(Matrix matrix, Matrix alpha) {
     return;
 }
 
+void reshape_matrix(Matrix* mat, size_t rows, size_t cols, float* new_data) {
+    mat -> rows = rows; 
+    mat -> cols = cols; 
+    if (new_data != NULL) {
+        free(mat -> data);
+        mat -> data = new_data;
+        return;
+    }
+    mat -> data = (float*) realloc(mat -> data, rows * cols * sizeof(float));
+    return;
+} 
+
 void copy_matrix(Matrix dest, Matrix src) {
     assert(dest.cols == src.cols);
     assert(dest.rows == src.rows);

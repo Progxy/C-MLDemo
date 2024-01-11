@@ -21,18 +21,18 @@ float sigmoidf(float x) {
     return 1.f / (1.f + expf(-x));
 }
 
+float leaky_reluf(float x) {
+    return x > 0 ? x : 0.01f * x;
+}
+
 float preluf(float x, float alpha) {
     return x >= 0 ? x : alpha * x;
 }
 
 float powerf(size_t base, float val) {
-    if (base == 0) {
-        return 1.f;
-    } 
+    float result = 1.0f;
 
-    float result = val;
-
-    for (size_t i = 1; i < base; ++i) {
+    for (size_t i = 0; i < base; ++i) {
         result *= val;
     }
 

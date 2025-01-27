@@ -7,7 +7,6 @@
 #include "./layers.h"
 #include "./utils.h"
 
-
 NeuralNetwork alloc_nn(size_t* arch, size_t arch_count) {
     NeuralNetwork neuralNetwork = {
         .layers = malloc(sizeof(Layer) * (arch_count)),
@@ -116,9 +115,7 @@ void backprop_nn(NeuralNetwork neuralNetwork, NeuralNetwork gradient, Matrix inp
                 // Calculate the differential for the weights and the activation
                 for (size_t r = 0; r < neuralNetwork.layers[l - 1].activation.cols; ++r) {
                     float previousActivation = MATRIX_AT(neuralNetwork.layers[l-1].activation, 0, r);
-                    //float weight = MATRIX_AT(neuralNetwork.layers[l].weight, r, c);
                     MATRIX_AT(gradient.layers[l].weight, r, c) = diffZ * previousActivation;
-                    //MATRIX_AT(gradient.layers[l - 1].activation, 0, r) = diffZ * weight;
                 }
             }
             matrix_dealloc(weighted_sum);

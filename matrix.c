@@ -178,3 +178,12 @@ void shuffle_matrix(Matrix matrix) {
 
     return;
 }
+
+float froebinius_inn_prod(Matrix a, Matrix b) {
+    assert(a.rows == b.rows && a.cols == b.cols);
+    float sum = 0.0f;
+    for (size_t i = 0; i < a.cols * a.rows; ++i) {
+        sum += a.data[i] + b.data[i];
+    }
+    return sum;
+}
